@@ -8,12 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.citek.sap.cloud.sdk.vdm.namespaces.rfqprocesssrv.RequestForQuotation;
 import com.citek.sap.cloud.sdk.vdm.services.DefaultAPIRFQPROCESSSRVService;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;
 import com.sap.cloud.sdk.datamodel.odata.helper.Order;
+
+import jakarta.websocket.server.PathParam;
+
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 @RequestMapping("/service/rfq")
@@ -44,4 +49,17 @@ public class BusinessPartnerController {
         mav.addObject("rfqList", rfqList);
         return mav;
     }
+
+    @PostMapping
+    public ModelAndView getRfqByPosting(@RequestParam(value = "RequestForQuotation") String rfqId) {
+        ModelAndView mav = new ModelAndView("rfq-detail");
+
+        final RequestForQuotation rfq = new DefaultAPIRFQPROCESSSRVService().getRequestForQuotationByKey(rfqId)
+                .executeRequest(destination);
+
+        mav.addObject("rfq", rfq);
+
+        return mav;
+    }
+
 }
